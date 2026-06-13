@@ -10,6 +10,13 @@ import type { ChatProvider } from "../llm";
 const DEFAULT_BASE_URL = "https://api.tokenfactory.nebius.com/v1";
 const DEFAULT_MODEL = "Qwen/Qwen3-30B-A3B-Instruct-2507";
 
+// Per-run cost guard. At Nebius pricing for Qwen3-30B-A3B (~$0.10/1M input,
+// ~$0.30/1M output) a screen is ~8K input + this output cap, i.e. well under
+// $0.01/run — far below the $0.25/run ceiling. Output is hard-capped here so no
+// single call can blow past that ceiling regardless of caller. (The real total
+// spend limit is set on the Nebius Token Factory API key.)
+const MAX_OUTPUT_TOKENS = 4096;
+
 interface ChatCompletion {
   choices?: { message?: { content?: string } }[];
 }
@@ -37,7 +44,8 @@ export const nebiusProvider: ChatProvider = {
       },
       body: JSON.stringify({
         model,
-        max_tokens: maxTokens ?? 4096,
+        // Hard output cap — never exceed MAX_OUTPUT_TOKENS even if a caller asks for more.
+        max_tokens: Math.min(maxTokens ?? MAX_OUTPUT_TOKENS, MAX_OUTPUT_TOKENS),
         temperature: 0.4,
         // Ask for strict JSON; extractJson in llm.ts is the safety net for models
         // that ignore this hint and wrap the object in prose or code fences.
