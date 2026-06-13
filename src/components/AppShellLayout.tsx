@@ -4,8 +4,11 @@ import { useEffect, useState } from "react";
 import {
   AppShell,
   Burger,
+  Box,
   Group,
   NavLink,
+  Stack,
+  ThemeIcon,
   Title,
   Text,
   ActionIcon,
@@ -25,6 +28,7 @@ import {
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { SignInButton } from "./SignInButton";
+import { PoweredByNebius } from "./PoweredByNebius";
 
 const NAV_LINKS = [
   { href: "/", label: "Dashboard", icon: IconLayoutDashboard },
@@ -45,12 +49,24 @@ export function AppShellLayout({ children }: { children: React.ReactNode }) {
     >
       <AppShell.Header>
         <Group h="100%" px="md" justify="space-between">
-          <Group>
+          <Group gap="sm">
             <Burger opened={opened} onClick={toggle} hiddenFrom="sm" size="sm" />
-            <Group gap="xs">
-              <IconChartLine size={22} />
-              <Title order={4}>NSE F&amp;O Screener</Title>
+            <Group gap="xs" wrap="nowrap">
+              <ThemeIcon radius="md" size={32} variant="filled" color="canary">
+                <IconChartLine size={20} stroke={2} />
+              </ThemeIcon>
+              <Box>
+                <Title order={4} lh={1.1}>
+                  Mobius-Screen
+                </Title>
+                <Text size="xs" c="dimmed" lh={1} visibleFrom="xs">
+                  AI Equities Screener
+                </Text>
+              </Box>
             </Group>
+            <Box visibleFrom="md">
+              <PoweredByNebius />
+            </Box>
           </Group>
           <Group gap="xs">
             <ThemeToggle />
@@ -79,9 +95,12 @@ export function AppShellLayout({ children }: { children: React.ReactNode }) {
             />
           );
         })}
-        <Text size="xs" c="dimmed" mt="lg" px="sm">
-          Personal tool. Not investment advice.
-        </Text>
+        <Stack gap={6} mt="lg" px="sm">
+          <PoweredByNebius />
+          <Text size="xs" c="dimmed">
+            Not investment advice.
+          </Text>
+        </Stack>
       </AppShell.Navbar>
 
       <AppShell.Main>{children}</AppShell.Main>
