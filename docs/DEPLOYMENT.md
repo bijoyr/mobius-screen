@@ -46,8 +46,9 @@ Docs: <https://docs.nebius.com/serverless/tutorials/deploy-model>
 
 ## 3. Web app
 
-### Cloudflare (live deploy — unchanged path)
+### Cloudflare (live deploy — Workers via OpenNext)
 ```bash
+npx wrangler login
 # set secrets once:
 wrangler secret put NEBIUS_API_KEY
 wrangler secret put TURSO_DATABASE_URL
@@ -55,11 +56,29 @@ wrangler secret put TURSO_AUTH_TOKEN
 wrangler secret put AUTH_SECRET
 wrangler secret put AUTH_GOOGLE_ID
 wrangler secret put AUTH_GOOGLE_SECRET
-wrangler secret put AUTH_URL
+wrangler secret put AUTH_URL          # https://screener.trustfractals.com
+wrangler secret put INGEST_SECRET
+wrangler secret put DEMO_USERNAME     # shared demo login (e.g. Tintin)
+wrangler secret put DEMO_PASSWORD     # e.g. Mobius9
 npm run deploy
 ```
-Non-secret vars (`NEBIUS_BASE_URL`, `NEBIUS_MODEL`)
+Non-secret vars (`NEBIUS_BASE_URL`, `NEBIUS_MODEL`, `NEXT_PUBLIC_FORMSPREE_ID`)
 live in [wrangler.jsonc](../wrangler.jsonc).
+
+**Custom domain.** [wrangler.jsonc](../wrangler.jsonc) binds the Worker to
+`screener.trustfractals.com` via a `custom_domain` route — `npm run deploy`
+auto-creates the DNS record + TLS cert. The zone (`trustfractals.com`) must be in
+the same Cloudflare account. To change/remove the domain, edit the `routes` block.
+
+**Google OAuth.** Add the production redirect URI to your Google OAuth client:
+`https://screener.trustfractals.com/api/auth/callback/google` (must match `AUTH_URL`).
+
+### Price-cache cron (optional — GitHub Actions)
+[.github/workflows/ingest.yml](../.github/workflows/ingest.yml) refreshes the Turso
+cache by calling `/api/ingest`. Set these **repo secrets** (Settings → Secrets →
+Actions): `WORKER_URL=https://screener.trustfractals.com` and `INGEST_SECRET`
+(must equal the Worker's `INGEST_SECRET`). Superseded by the Nebius batch Job; keep
+only if you want an HTTP-driven refresh.
 
 ### Docker (portable)
 ```bash
