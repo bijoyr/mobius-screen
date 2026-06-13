@@ -1,2 +1,10 @@
 # Auto detect text files and perform LF normalization
 * text=auto
+
+# Shell scripts and Dockerfiles MUST stay LF — CRLF breaks them on Linux/Nebius
+*.sh text eol=lf
+Dockerfile text eol=lf
+*/Dockerfile text eol=lf
+
+# Lockfiles / generated — keep diffs quiet
+package-lock.json -diff linguist-generated
