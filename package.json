@@ -1,0 +1,47 @@
+{
+  "name": "nse-screener",
+  "version": "0.1.0",
+  "private": true,
+  "scripts": {
+    "dev": "next dev --webpack",
+    "build": "next build --webpack",
+    "start": "next start",
+    "lint": "eslint",
+    "graph": "node scripts/graph.mjs",
+    "job": "tsx jobs/batch-screen.ts",
+    "preview": "opennextjs-cloudflare build && opennextjs-cloudflare preview",
+    "deploy": "opennextjs-cloudflare build && opennextjs-cloudflare deploy",
+    "cf-typegen": "wrangler types"
+  },
+  "dependencies": {
+    "@libsql/client": "^0.17.3",
+    "@mantine/core": "^9.2.1",
+    "@mantine/dates": "^9.2.1",
+    "@mantine/hooks": "^9.2.1",
+    "@mantine/notifications": "^9.2.1",
+    "@tabler/icons-react": "^3.44.0",
+    "dayjs": "^1.11.20",
+    "exceljs": "^4.4.0",
+    "mantine-datatable": "^9.2.2",
+    "next": "16.2.6",
+    "next-auth": "^5.0.0-beta.31",
+    "openai": "^4.104.0",
+    "react": "19.2.4",
+    "react-dom": "19.2.4",
+    "technicalindicators": "^3.1.0",
+    "yahoo-finance2": "^3.14.1"
+  },
+  "devDependencies": {
+    "@opennextjs/cloudflare": "^1.19.11",
+    "@tailwindcss/postcss": "^4",
+    "@types/node": "^20",
+    "@types/react": "^19",
+    "@types/react-dom": "^19",
+    "eslint": "^9",
+    "eslint-config-next": "16.2.6",
+    "tailwindcss": "^4",
+    "tsx": "^4.22.4",
+    "typescript": "^5",
+    "wrangler": "^4.95.0"
+  }
+}

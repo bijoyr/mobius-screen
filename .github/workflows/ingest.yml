@@ -1,0 +1,67 @@
+name: Ingest price cache
+
+# Refreshes the Turso price cache by looping bounded slices against the deployed
+# Worker's /api/ingest endpoint. Each curl is a separate Worker invocation with
+# its own Cloudflare 50-subrequest budget, so the universe is covered safely no
+# matter how large it grows. This orchestrator runs on GitHub's runners (not
+# Cloudflare), so the loop itself is uncapped and free.
+#
+# Required repo secrets:
+#   WORKER_URL     e.g. https://screener.trustfractals.com  (no trailing slash)
+#   INGEST_SECRET  must match the Worker's INGEST_SECRET env/secret
+
+on:
+  schedule:
+    # Times are UTC. NSE 09:15-15:30 IST  = ~03:45-10:00 UTC, Mon-Fri.
+    - cron: "*/20 3-10 * * 1-5"
+    # UAE 10:00-15:00 GST = ~06:00-11:00 UTC, Sun-Thu (days 0-4).
+    - cron: "*/20 5-11 * * 0,1,2,3,4"
+  workflow_dispatch:
+    inputs:
+      markets:
+        description: "Space-separated markets to ingest"
+        default: "IN UAE INTL"
+      count:
+        description: "Stocks per slice (max 16)"
+        default: "12"
+
+concurrency:
+  group: ingest
+  cancel-in-progress: false
+
+jobs:
+  ingest:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - name: Refresh cache slices
+        env:
+          WORKER_URL: ${{ secrets.WORKER_URL }}
+          INGEST_SECRET: ${{ secrets.INGEST_SECRET }}
+          MARKETS: ${{ github.event.inputs.markets || 'IN UAE INTL' }}
+          COUNT: ${{ github.event.inputs.count || '12' }}
+        run: |
+          set -euo pipefail
+          if [ -z "${WORKER_URL:-}" ] || [ -z "${INGEST_SECRET:-}" ]; then
+            echo "::error::WORKER_URL and INGEST_SECRET repo secrets must be set."
+            exit 1
+          fi
+          for MARKET in $MARKETS; do
+            echo "=== Ingesting $MARKET ==="
+            OFFSET=0
+            for _ in $(seq 1 200); do
+              RESP=$(curl -fsS --retry 3 --retry-delay 5 -X POST "$WORKER_URL/api/ingest" \
+                -H "Authorization: Bearer $INGEST_SECRET" \
+                -H "Content-Type: application/json" \
+                -d "{\"market\":\"$MARKET\",\"offset\":$OFFSET,\"count\":$COUNT}")
+              echo "$RESP"
+              DONE=$(echo "$RESP" | jq -r '.done')
+              NEXT=$(echo "$RESP" | jq -r '.nextOffset')
+              if [ "$DONE" = "true" ]; then
+                echo "--- $MARKET done ---"
+                break
+              fi
+              OFFSET=$NEXT
+              sleep 2
+            done
+          done
