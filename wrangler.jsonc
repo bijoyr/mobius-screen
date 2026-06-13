@@ -8,6 +8,9 @@
     "binding": "ASSETS",
     "directory": ".open-next/assets"
   },
+  // Serves the Worker at the custom domain (Cloudflare auto-manages DNS + TLS).
+  // The zone (trustfractals.com) must be in this Cloudflare account.
+  "routes": [{ "pattern": "screener.trustfractals.com", "custom_domain": true }],
   "vars": {
     "NEBIUS_BASE_URL": "https://api.tokenfactory.nebius.com/v1",
     "NEBIUS_MODEL": "Qwen/Qwen3-30B-A3B-Instruct-2507",
