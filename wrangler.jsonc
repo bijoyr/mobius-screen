@@ -4,6 +4,8 @@
   "main": ".open-next/worker.js",
   "compatibility_date": "2025-05-05",
   "compatibility_flags": ["nodejs_compat"],
+  // Capture Worker logs so they're queryable (dashboard + observability API).
+  "observability": { "enabled": true },
   "assets": {
     "binding": "ASSETS",
     "directory": ".open-next/assets"

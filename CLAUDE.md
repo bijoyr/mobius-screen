@@ -51,7 +51,7 @@ Per-stock Yahoo + TradingView symbols are pre-computed in the universe definitio
 |-------|---------|-------|
 | Framework | next 16 | App Router, server components |
 | UI | @mantine/core 9, mantine-datatable 9 | NOT v7 as in original plan |
-| AI | `openai` SDK → Nebius Serverless AI | Default `Qwen/Qwen3-30B-A3B-Instruct-2507`; configured via `NEBIUS_BASE_URL` / `NEBIUS_API_KEY` / `NEBIUS_MODEL` |
+| AI | native `fetch` → Nebius (OpenAI-compatible REST) | Default `Qwen/Qwen3-30B-A3B-Instruct-2507`; configured via `NEBIUS_BASE_URL` / `NEBIUS_API_KEY` / `NEBIUS_MODEL`. No SDK (workerd-safe). |
 | Data | yahoo-finance2 + TradingView scanner | NSE/DFM via Yahoo; ADX via `lib/tvscan.ts` (scanner.tradingview.com) |
 | DB | better-sqlite3 | Native module — Vercel-incompatible, see DEPLOYMENT.md |
 | Indicators | technicalindicators | RSI, MACD, SMA; Fib computed manually |
