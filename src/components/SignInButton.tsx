@@ -1,6 +1,7 @@
 "use client";
 
-import { signIn, signOut, useSession } from "next-auth/react";
+import { useState } from "react";
+import { signOut, useSession } from "next-auth/react";
 import {
   ActionIcon,
   Avatar,
@@ -9,10 +10,12 @@ import {
   Menu,
   Text,
 } from "@mantine/core";
-import { IconBrandGoogle, IconLogout } from "@tabler/icons-react";
+import { IconLogin2, IconLogout } from "@tabler/icons-react";
+import { LoginModal } from "./LoginModal";
 
 export function SignInButton() {
   const { data: session, status } = useSession();
+  const [loginOpen, setLoginOpen] = useState(false);
 
   if (status === "loading") {
     return <Loader size="xs" />;
@@ -20,14 +23,17 @@ export function SignInButton() {
 
   if (!session?.user) {
     return (
-      <Button
-        size="xs"
-        variant="light"
-        leftSection={<IconBrandGoogle size={14} />}
-        onClick={() => signIn("google")}
-      >
-        Sign in
-      </Button>
+      <>
+        <Button
+          size="xs"
+          variant="light"
+          leftSection={<IconLogin2 size={14} />}
+          onClick={() => setLoginOpen(true)}
+        >
+          Sign in
+        </Button>
+        <LoginModal opened={loginOpen} onClose={() => setLoginOpen(false)} />
+      </>
     );
   }
 

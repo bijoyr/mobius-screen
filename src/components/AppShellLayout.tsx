@@ -97,8 +97,8 @@ export function AppShellLayout({ children }: { children: React.ReactNode }) {
         })}
         <Stack gap={6} mt="lg" px="sm">
           <PoweredByNebius />
-          <Text size="xs" c="dimmed">
-            Not investment advice.
+          <Text fz={10} c="dimmed">
+            Bijoy Project - Not investment advice
           </Text>
         </Stack>
       </AppShell.Navbar>
