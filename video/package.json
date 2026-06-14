@@ -4,7 +4,9 @@
   "private": true,
   "description": "Remotion promo video for Mobius-Screen",
   "scripts": {
+    "prestudio": "node scripts/make-music.mjs",
     "studio": "remotion studio",
+    "prerender": "node scripts/make-music.mjs",
     "render": "remotion render MobiusPromo out/mobius-promo.mp4"
   },
   "dependencies": {

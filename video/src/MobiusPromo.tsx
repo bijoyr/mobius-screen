@@ -1,9 +1,11 @@
 import React from "react";
 import {
   AbsoluteFill,
+  Audio,
   Sequence,
   interpolate,
   spring,
+  staticFile,
   useCurrentFrame,
   useVideoConfig,
   Easing,
@@ -79,7 +81,7 @@ const WAVE_PTS: [number, number, string][] = [
 
 const SceneWave: React.FC = () => {
   const frame = useCurrentFrame();
-  const draw = interpolate(frame, [10, 160], [4000, 0], {
+  const draw = interpolate(frame, [4, 90], [4000, 0], {
     extrapolateRight: "clamp",
     easing: Easing.inOut(Easing.ease),
   });
@@ -110,7 +112,7 @@ const SceneWave: React.FC = () => {
             style={{ filter: `drop-shadow(0 0 10px ${CANARY}88)` }}
           />
           {WAVE_PTS.map(([x, y, label], i) => {
-            const appear = interpolate(frame, [60 + i * 10, 75 + i * 10], [0, 1], {
+            const appear = interpolate(frame, [38 + i * 6, 50 + i * 6], [0, 1], {
               extrapolateLeft: "clamp",
               extrapolateRight: "clamp",
             });
@@ -183,7 +185,7 @@ const BigNum: React.FC<{ at: number; value: string; label: string }> = ({
   const frame = useCurrentFrame();
   const { fps } = useVideoConfig();
   const s = spring({ frame: frame - at, fps, config: { damping: 200 } });
-  const out = interpolate(frame, [at + 70, at + 85], [1, 0], {
+  const out = interpolate(frame, [at + 52, at + 64], [1, 0], {
     extrapolateLeft: "clamp",
     extrapolateRight: "clamp",
   });
@@ -205,9 +207,9 @@ const SceneNarrow: React.FC = () => (
         <Kicker>Signal, not noise</Kicker>
       </Rise>
     </div>
-    <BigNum at={10} value="679" label="stocks tracked · S&P 500 + NSE F&O" />
-    <BigNum at={100} value="10" label="high-conviction setups" />
-    <BigNum at={190} value="1" label="top pick — ranked by conviction" />
+    <BigNum at={8} value="679" label="stocks tracked · S&P 500 + NSE F&O" />
+    <BigNum at={74} value="10" label="high-conviction setups" />
+    <BigNum at={140} value="1" label="top pick — ranked by conviction" />
   </Bg>
 );
 
@@ -256,18 +258,18 @@ const SceneCard: React.FC = () => (
               BUY · conviction 5
             </div>
           </div>
-          <Rise delay={24} y={16}>
+          <Rise delay={16} y={16}>
             <div style={{ fontSize: 30, color: WHITE, lineHeight: 1.45, marginBottom: 18 }}>
               Strong macro alignment with the AI-capex cycle; Wave 4 ABC complete,
               Wave 5 starting with MACD reversal. <span style={{ color: CANARY }}>R:R 2.1.</span>
             </div>
           </Rise>
-          <Row k="Entry" v="$511.57" delay={40} />
-          <Row k="Stop" v="$480" delay={48} color="#ff8a8a" />
-          <Row k="Target" v="$585" delay={56} color={CANARY} />
+          <Row k="Entry" v="$511.57" delay={26} />
+          <Row k="Stop" v="$480" delay={32} color="#ff8a8a" />
+          <Row k="Target" v="$585" delay={38} color={CANARY} />
         </div>
       </Rise>
-      <Rise delay={70}>
+      <Rise delay={48}>
         <div style={{ fontSize: 26, color: DIM, marginTop: 22, textAlign: "center" }}>
           Wave count · RSI · MACD · Fibonacci · moving averages · hard risk/reward floor
         </div>
@@ -280,7 +282,7 @@ const SceneCard: React.FC = () => (
 const Chip: React.FC<{ label: string; i: number }> = ({ label, i }) => {
   const frame = useCurrentFrame();
   const { fps } = useVideoConfig();
-  const s = spring({ frame: frame - 30 - i * 8, fps, config: { damping: 200 } });
+  const s = spring({ frame: frame - 16 - i * 7, fps, config: { damping: 200 } });
   return (
     <div
       style={{
@@ -322,7 +324,7 @@ const SceneNebius: React.FC = () => (
           <Chip key={m} label={m} i={i} />
         ))}
       </div>
-      <Rise delay={80}>
+      <Rise delay={44}>
         <div style={{ fontSize: 32, color: DIM }}>
           Swap any model with one line · a serverless job screens the whole universe ·
           <span style={{ color: WHITE }}> pennies per run, no idle GPU.</span>
@@ -365,7 +367,10 @@ const SceneCTA: React.FC = () => (
         <div style={{ fontSize: 30, color: DIM, marginTop: 28 }}>
           screener.trustfractals.com · Powered by Nebius AI
         </div>
-        <div style={{ fontSize: 24, color: CANARY, marginTop: 10 }}>
+        <div style={{ fontSize: 20, color: DIM, marginTop: 6 }}>
+          Developed by Trinfac
+        </div>
+        <div style={{ fontSize: 24, color: CANARY, marginTop: 12 }}>
           #NebiusServerlessChallenge
         </div>
       </Rise>
@@ -377,22 +382,23 @@ const SceneCTA: React.FC = () => (
 export const MobiusPromo: React.FC = () => {
   return (
     <AbsoluteFill style={{ backgroundColor: NAVY }}>
-      <Sequence durationInFrames={300}>
+      <Audio src={staticFile("music.wav")} volume={0.5} />
+      <Sequence durationInFrames={180}>
         <SceneWave />
       </Sequence>
-      <Sequence from={300} durationInFrames={240}>
+      <Sequence from={180} durationInFrames={150}>
         <SceneEarly />
       </Sequence>
-      <Sequence from={540} durationInFrames={330}>
+      <Sequence from={330} durationInFrames={210}>
         <SceneNarrow />
       </Sequence>
-      <Sequence from={870} durationInFrames={300}>
+      <Sequence from={540} durationInFrames={180}>
         <SceneCard />
       </Sequence>
-      <Sequence from={1170} durationInFrames={280}>
+      <Sequence from={720} durationInFrames={150}>
         <SceneNebius />
       </Sequence>
-      <Sequence from={1450} durationInFrames={200}>
+      <Sequence from={870} durationInFrames={150}>
         <SceneCTA />
       </Sequence>
     </AbsoluteFill>
