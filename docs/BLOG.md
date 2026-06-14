@@ -24,6 +24,28 @@ it was **how to run this cheaply and reproducibly**, given the workload is burst
 (markets are interesting for a few hours a day) and the output must be strict,
 machine-readable JSON.
 
+## The edge: reading impulse vs. corrective waves *in the making*
+
+The heart of Mobius-Screen isn't "ask an LLM what's hot." It's a rigorous
+**Elliott-Wave framework** — distilled from years of discretionary chart reading —
+that the model must apply to *every* name, to catch impulse and corrective moves
+**while they're still forming**, not after the move is obvious:
+
+- **Longs** target the end of a **Wave 2 or Wave 4** pullback inside an established
+  uptrend, or a completed **A–B correction** kicking off a fresh impulse.
+- **Shorts** target **Wave 5 exhaustion** or a **Wave B** lower high after an impulse
+  has run its course.
+
+Every candidate is then cross-examined against a stack of confirming parameters —
+**RSI divergence/extremes, MACD cross & histogram posture, proximity to key
+Fibonacci retracements (38.2 / 50 / 61.8), and 50/200-day moving-average
+structure** — and gated by a hard **risk/reward floor** (entry, stop and target
+must clear a minimum R:R). A name only surfaces when the **wave count, the
+technicals, and a live macro theme all line up**. Encoding that judgement into the
+prompt is what makes the model reason like a seasoned chartist instead of guessing —
+and it's why the indicators are pre-computed deterministically in TypeScript and
+handed to the model as exact numbers (it reasons; it never does the arithmetic).
+
 ## Why Nebius Serverless AI
 
 Screening is **embarrassingly batchable and mostly idle** — the worst possible fit
