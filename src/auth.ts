@@ -32,14 +32,11 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
         password: { label: "Password", type: "password" },
       },
       authorize(creds) {
-        const expectedUser = process.env.DEMO_USERNAME ?? "Tintin";
-        const expectedPass = process.env.DEMO_PASSWORD ?? "Mobius9";
-        if (
-          typeof creds?.username === "string" &&
-          typeof creds?.password === "string" &&
-          creds.username === expectedUser &&
-          creds.password === expectedPass
-        ) {
+        const expectedUser = (process.env.DEMO_USERNAME ?? "Tintin").trim();
+        const expectedPass = (process.env.DEMO_PASSWORD ?? "Mobius9").trim();
+        const user = typeof creds?.username === "string" ? creds.username.trim() : "";
+        const pass = typeof creds?.password === "string" ? creds.password.trim() : "";
+        if (user && pass && user === expectedUser && pass === expectedPass) {
           // Stable id → all demo users share one isolated data space.
           return {
             id: "demo-user",

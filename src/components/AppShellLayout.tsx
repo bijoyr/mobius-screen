@@ -96,7 +96,6 @@ export function AppShellLayout({ children }: { children: React.ReactNode }) {
           );
         })}
         <Stack gap={6} mt="lg" px="sm">
-          <PoweredByNebius />
           <Text fz={10} c="dimmed">
             Bijoy Project - Not investment advice
           </Text>
