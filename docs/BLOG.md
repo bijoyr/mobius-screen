@@ -2,9 +2,9 @@
 
 *Tag: #NebiusServerlessChallenge · Repo: https://github.com/bijoyr/mobius-screen*
 
-> Draft for the Nebius Serverless AI Builders Challenge. Replace the
-> `[SCREENSHOT]` / `[NUMBER]` placeholders with your own evidence before publishing
-> on Medium / Dev / Hashnode / LinkedIn. Aim: original narrative, not a README copy.
+> Written for the Nebius Serverless AI Builders Challenge. Numbers and sample
+> output are from a real Serverless AI Job run. Add dashboard / job-log screenshots
+> for extra visual proof, then publish on Medium / Dev / Hashnode / LinkedIn.
 
 ---
 
@@ -81,22 +81,43 @@ the runtime's **native `fetch`**. It's portable across Node, workerd, and edge, 
 bonus — it surfaces *real* API errors (like a `402`) instead of a generic failure.
 
 **4. Cost guardrails.** Output tokens are hard-capped per request, the model is a
-cheap MoE, and the batch job is CPU-only. A single screen runs ~`[NUMBER]`s and costs
-roughly **$0.002** at Token Factory pricing (~$0.10/1M input, ~$0.30/1M output) —
-a full `[NUMBER]`-stock screen is a fraction of a cent.
+cheap MoE, and the batch job is CPU-only. A 30-stock screen completes the LLM step
+in ~24s and costs well under a cent at Token Factory pricing (~$0.10/1M input,
+~$0.30/1M output) — even the full ~503-stock S&P 500 screen stays in fractions of a cent.
 
 ## Results
 
-[SCREENSHOT: the Mobius-Screen dashboard — dark "Blue Whale" UI, Canary accents,
-ranked buys/sells with entry/stop/target.]
+The Serverless AI Job runs cleanly on Nebius. Here are the actual logs from a run
+screening 30 S&P 500 names (capped for a quick demo — the full universe is ~503):
 
-[SCREENSHOT: `nebius ai job logs <id>` showing the Serverless AI Job running the
-batch screen across markets and exiting cleanly.]
+```
+Batch screen starting — markets: US
+[US] fetching 30 symbols (capped from 503)…
+[US] fresh 30, stale-cache 0, dropped 0
+[US] screening 30 symbols…
+[US] saved screen #6 via nebius: 5 buys, 5 sells
+Batch screen finished — all markets OK.
+```
 
-- Universe screened: `[NUMBER]` symbols (NSE F&O) + ~500 (US S&P 500).
-- Job runtime: ~`[NUMBER]` on a `[CPU preset]` Serverless AI Job.
-- Approx cost: live screen ≈ **$0.002**; one batch job run ≈ **$[NUMBER]**.
-- Example output: `[paste a sample buy/sell pick with thesis + wave count]`.
+- **Universe:** 503 S&P 500 (US) + 176 NSE F&O (India).
+- **This run:** 30 US symbols, **0 fetch failures**.
+- **Runtime:** ~60s total on a **4 vCPU / 16 GB, CPU-only** Serverless AI Job
+  (~6s to pull 30 quotes+charts from Yahoo, ~24s for the LLM screen, the rest is `npm install`).
+- **Cost:** the LLM call (`Qwen/Qwen3-30B-A3B-Instruct-2507`, ≈ $0.10 / $0.30 per 1M
+  input/output tokens) is **well under a cent per screen**; the whole CPU job is a
+  few cents. No idle GPU.
+- **Sample output (screen #6):**
+
+| Side | Ticker | Conv. | Entry | Stop | Target | Thesis (abridged) |
+|------|--------|-------|-------|------|--------|-------------------|
+| BUY  | AMD  | 5 | 367.33 | 345 | 546.44 | AI-capex cycle; Wave 4 ABC complete, Wave 5 starting |
+| BUY  | ABNB | 4 | 135.13 | 128 | 147.25 | Travel + digital-ad recovery; Wave 4 complete |
+| SELL | ADBE | 5 | 204.02 | 215 | 196.90 | Momentum exhaustion into resistance |
+| SELL | AMZN | 4 | 238.55 | 247 | 196.00 | Distribution after an extended run |
+
+> *Optional visual proof:* drop in a screenshot of the live dashboard (dark
+> Blue&nbsp;Whale UI, ranked picks) and of the Nebius **Job → Logs** view above.
+> Live app: https://screener.trustfractals.com
 
 ## Lessons learned
 
