@@ -5,7 +5,7 @@
 #
 # CPU-only: the job fetches market data over HTTP and calls the LLM over HTTP —
 # no GPU is needed in the job itself (the GPU lives behind the Nebius Endpoint).
-FROM node:20-slim
+FROM node:22-slim
 
 WORKDIR /app
 

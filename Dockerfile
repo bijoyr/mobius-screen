@@ -3,19 +3,19 @@
 # Run:    docker run --rm -p 3000:3000 --env-file .env mobius-screen
 # This is the vendor-neutral way to run the UI anywhere; the Cloudflare/OpenNext
 # path (npm run deploy) still works and is used for the live deployment.
-FROM node:20-slim AS deps
+FROM node:22-slim AS deps
 WORKDIR /app
 COPY package.json package-lock.json ./
 RUN npm ci
 
-FROM node:20-slim AS builder
+FROM node:22-slim AS builder
 WORKDIR /app
 COPY --from=deps /app/node_modules ./node_modules
 COPY . .
 # next.config.ts sets output:"standalone", producing .next/standalone + static.
 RUN npm run build
 
-FROM node:20-slim AS runner
+FROM node:22-slim AS runner
 WORKDIR /app
 ENV NODE_ENV=production
 ENV PORT=3000

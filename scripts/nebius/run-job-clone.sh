@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 # Run the batch screener as a Nebius Serverless AI Job WITHOUT building a Docker
-# image — the job clones this public repo at runtime on a stock node:20 image.
+# image — the job clones this public repo at runtime on a stock node:22 image.
 # Use this when you can't build/push a container locally (e.g. no Docker).
 # CPU-only + short timeout = a few cents per run.
 #
@@ -34,7 +34,7 @@ npx tsx jobs/batch-screen.ts"
 echo "Creating Serverless AI Job '${JOB_NAME}' (runtime clone, no image build)…"
 nebius ai job create \
   --name "${JOB_NAME}" \
-  --image "node:20-slim" \
+  --image "node:22-slim" \
   --container-command "bash" \
   --args "-lc" --args "${RUN_CMD}" \
   --platform "${PLATFORM}" \
