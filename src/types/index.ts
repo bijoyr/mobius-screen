@@ -1,15 +1,15 @@
 export type ScreenSide = "BUY" | "SELL";
 
-export type MarketId = "IN" | "UAE" | "INTL";
-export type ExchangeId = "NSE" | "ADX" | "DFM" | "INTL";
+export type MarketId = "IN" | "US" | "INTL";
+export type ExchangeId = "NSE" | "US" | "INTL";
 export type ScreenDirection = "LONG_SHORT" | "LONG_ONLY";
 
 export interface Stock {
   /** Bare ticker — what appears in URLs and the watchlist. */
   symbol: string;
-  /** Full Yahoo Finance symbol (e.g. "RELIANCE.NS", "EMAAR.DU"). */
+  /** Full Yahoo Finance symbol (e.g. "RELIANCE.NS", "AAPL", "BRK-B"). */
   yahooSymbol: string;
-  /** Full TradingView symbol (e.g. "NSE:RELIANCE", "ADX:IHC"). */
+  /** Full TradingView symbol (e.g. "NSE:RELIANCE", "AAPL"). */
   tvSymbol: string;
   exchange: ExchangeId;
   marketId: MarketId;

@@ -182,7 +182,7 @@ export default function ScreenerPage() {
     [markets, market],
   );
   const direction: ScreenDirection = currentMarket?.direction ?? "LONG_SHORT";
-  const currency = market === "UAE" ? "AED " : "₹";
+  const currency = market === "US" ? "$" : "₹";
   const defaults = direction === "LONG_ONLY" ? DEFAULT_LONG_ONLY : DEFAULT_LONG_SHORT;
 
   // Seed params from server when signed in; otherwise fall back to the
@@ -277,7 +277,7 @@ export default function ScreenerPage() {
     ? markets.map((m) => ({ value: m.id, label: m.label }))
     : [
         { value: "IN", label: "India · NSE F&O" },
-        { value: "UAE", label: "UAE · DFM + ADX" },
+        { value: "US", label: "US · S&P 500" },
       ];
 
   if (status === "loading") {

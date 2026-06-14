@@ -43,7 +43,7 @@ products map cleanly onto the two access patterns:
   it's configured purely by `NEBIUS_BASE_URL` + `NEBIUS_API_KEY`, you can point it
   at a dedicated Serverless AI Endpoint, Token Factory, or any OpenAI-compatible
   server with no code change. No proprietary AI SDK is used.
-- **Data:** `yahoo-finance2` (NSE/DFM) + TradingView scanner (ADX); RSI/MACD/SMA
+- **Data:** `yahoo-finance2` (NSE + US S&P 500, full OHLC); RSI/MACD/SMA
   via `technicalindicators`, Fibonacci computed manually.
 
 ## Quick start (local)
@@ -87,7 +87,7 @@ NEBIUS_MODEL=Qwen/Qwen2.5-7B-Instruct         # size to your GPU preset
 
 ```bash
 # cheap local test run — 3 symbols, one market (uses your .env.local)
-MARKETS=UAE MAX_SYMBOLS=3 npm run job
+MARKETS=US MAX_SYMBOLS=3 npm run job
 # full run
 npm run job
 
@@ -113,7 +113,7 @@ docker run --rm -p 3000:3000 --env-file .env.local mobius-screen
 | `NEBIUS_MODEL` | no | `Qwen/Qwen3-30B-A3B-Instruct-2507` | any served model |
 | `TURSO_DATABASE_URL` / `TURSO_AUTH_TOKEN` | yes | — | libSQL DB |
 | `AUTH_SECRET`, `AUTH_GOOGLE_ID`, `AUTH_GOOGLE_SECRET`, `AUTH_URL` | yes | — | Google sign-in |
-| `MARKETS` | job | `IN UAE INTL` | markets the job screens |
+| `MARKETS` | job | `IN US INTL` | markets the job screens |
 | `MAX_SYMBOLS` | job | `0` | cap symbols/market (`0`=all); set small for a cheap test |
 | `BATCH_USER_ID` | job | `batch` | owner of job-written screens |
 

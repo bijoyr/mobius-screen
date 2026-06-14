@@ -18,8 +18,8 @@ each name sits in its cycle), and **classical technicals** (RSI, MACD, moving
 averages, Fibonacci levels). That's a reasoning task, not a formula — exactly where
 an LLM helps, and exactly where pre-computed numbers keep it honest.
 
-I built **Mobius-Screen** to do this for India's NSE F&O universe and the UAE markets
-(DFM + ADX). The interesting engineering question wasn't "can an LLM rank stocks" —
+I built **Mobius-Screen** to do this for India's NSE F&O universe and the US S&P 500.
+The interesting engineering question wasn't "can an LLM rank stocks" —
 it was **how to run this cheaply and reproducibly**, given the workload is bursty
 (markets are interesting for a few hours a day) and the output must be strict,
 machine-readable JSON.
@@ -57,7 +57,7 @@ Browser ─▶ Next.js UI (Cloudflare Worker)
   `Qwen/Qwen3-30B-A3B-Instruct-2507` — a Mixture-of-Experts model (~3B active
   params) that's cheap and fast yet follows a strict JSON schema well.
 - **Batch job**: `jobs/batch-screen.ts` loops the markets, fetches fresh prices +
-  indicators (Yahoo Finance + a TradingView scanner for ADX), screens each market,
+  indicators (Yahoo Finance — full OHLC for all names), screens each market,
   and writes results to Turso — with per-item retry and per-market isolation.
 - **Data**: a shared Turso price cache means live screens read cached indicators
   instead of re-fetching upstream every time.
@@ -93,7 +93,7 @@ ranked buys/sells with entry/stop/target.]
 [SCREENSHOT: `nebius ai job logs <id>` showing the Serverless AI Job running the
 batch screen across markets and exiting cleanly.]
 
-- Universe screened: `[NUMBER]` symbols (NSE F&O) + `[NUMBER]` (UAE).
+- Universe screened: `[NUMBER]` symbols (NSE F&O) + ~500 (US S&P 500).
 - Job runtime: ~`[NUMBER]` on a `[CPU preset]` Serverless AI Job.
 - Approx cost: live screen ≈ **$0.002**; one batch job run ≈ **$[NUMBER]**.
 - Example output: `[paste a sample buy/sell pick with thesis + wave count]`.

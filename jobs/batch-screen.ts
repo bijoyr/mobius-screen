@@ -13,7 +13,7 @@
  * per-item retry, per-market error isolation, and a single scheduled entrypoint.
  *
  * Env:
- *   MARKETS        space/comma-separated market ids   (default "IN UAE INTL")
+ *   MARKETS        space/comma-separated market ids   (default "IN US INTL")
  *   MAX_SYMBOLS    cap symbols screened per market (default 0 = whole universe;
  *                  set a small number for a cheap test run)
  *   BATCH_USER_ID  user id screen-history rows are saved under (default "batch")
@@ -27,9 +27,8 @@ import { mapConcurrent } from "@/lib/concurrent";
 import { runScreener } from "@/lib/llm";
 import { upsertCachedPrices, saveScreenRun, type CachedPriceInput } from "@/lib/db";
 
-const KNOWN_MARKETS: MarketId[] = ["IN", "UAE", "INTL"];
+const KNOWN_MARKETS: MarketId[] = ["IN", "US", "INTL"];
 const YAHOO_CONCURRENCY = 8;
-const TV_SCANNER_CONCURRENCY = 4;
 const FETCH_RETRIES = 3;
 
 interface Fetched {
@@ -83,15 +82,10 @@ async function screenMarket(
       "…",
   );
 
-  const yahooStocks = universe.filter((s) => s.exchange !== "ADX");
-  const tvStocks = universe.filter((s) => s.exchange === "ADX");
-  const [yahooBatch, tvBatch] = await Promise.all([
-    mapConcurrent(yahooStocks, YAHOO_CONCURRENCY, (s) => fetchOne(market, s)),
-    mapConcurrent(tvStocks, TV_SCANNER_CONCURRENCY, (s) => fetchOne(market, s)),
-  ]);
-  const fetched = [...yahooBatch.results, ...tvBatch.results].filter(
-    (r): r is Fetched => r != null,
+  const batch = await mapConcurrent(universe, YAHOO_CONCURRENCY, (s) =>
+    fetchOne(market, s),
   );
+  const fetched = batch.results.filter((r): r is Fetched => r != null);
 
   const contexts: StockContext[] = [];
   const toWrite: CachedPriceInput[] = [];
@@ -132,7 +126,7 @@ async function screenMarket(
 async function main() {
   const userId = process.env.BATCH_USER_ID ?? "batch";
   const maxSymbols = Math.max(0, Math.trunc(Number(process.env.MAX_SYMBOLS ?? 0)));
-  const requested = (process.env.MARKETS ?? "IN UAE INTL")
+  const requested = (process.env.MARKETS ?? "IN US INTL")
     .split(/[\s,]+/)
     .map((m) => m.trim().toUpperCase())
     .filter(Boolean) as MarketId[];
@@ -141,7 +135,7 @@ async function main() {
   const unknown = requested.filter((m) => !KNOWN_MARKETS.includes(m));
   if (unknown.length) console.warn(`Ignoring unknown markets: ${unknown.join(", ")}`);
   if (markets.length === 0) {
-    console.error("No valid markets to screen. Set MARKETS (e.g. 'IN UAE INTL').");
+    console.error("No valid markets to screen. Set MARKETS (e.g. 'IN US INTL').");
     process.exit(1);
   }
 

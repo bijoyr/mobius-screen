@@ -19,7 +19,7 @@ JOB_NAME="${JOB_NAME:-mobius-batch-screen}"
 PLATFORM="${PLATFORM:-cpu-d3}"          # adjust to an available CPU platform
 PRESET="${PRESET:-4vcpu-16gb}"          # adjust to a matching CPU preset
 TIMEOUT="${TIMEOUT:-30m}"
-MARKETS="${MARKETS:-IN UAE}"
+MARKETS="${MARKETS:-IN US}"
 MAX_SYMBOLS="${MAX_SYMBOLS:-0}"          # 0 = full universe; set small for a cheap test
 SECRET_ID="${SECRET_ID:?Set SECRET_ID to the MysteryBox secret holding NEBIUS_*/TURSO_*}"
 SUBNET_ID="${SUBNET_ID:-$(nebius vpc subnet list --format jsonpath='{.items[0].metadata.id}')}"

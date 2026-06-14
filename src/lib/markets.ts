@@ -1,5 +1,6 @@
 import type { Market, MarketId, Stock } from "@/types";
 import { listIntlUniverse } from "./db";
+import { SPX_UNIVERSE } from "./sp500";
 
 /**
  * NSE F&O eligible stocks. Source: NSE's "Securities Available for Trading"
@@ -185,95 +186,6 @@ const IN_UNIVERSE: Stock[] = [
   ns("ZYDUSLIFE", "Zydus Lifesciences", "Pharma"),
 ];
 
-/**
- * UAE — DFM (Dubai) + ADX (Abu Dhabi).
- *
- * Two data paths feed this universe:
- *  - DFM (`.AE` suffix) → Yahoo Finance via `lib/yahoo.ts`.
- *  - ADX → TradingView's public scanner endpoint via `lib/tvscan.ts`.
- *    Yahoo has no ADX coverage; the scanner returns price + RSI/MACD/SMA
- *    pre-computed (no OHLC bars, so Fib levels are unavailable for ADX).
- *
- * TradingView prefixes: `DFM:` for Dubai, `ADX:` for Abu Dhabi.
- * All stocks below were verified live via probe scripts.
- */
-const UAE_UNIVERSE: Stock[] = [
-  // ===== DFM (Dubai) =====
-  // Real Estate
-  dfm("EMAAR", "Emaar Properties", "Real Estate"),
-  dfm("EMAARDEV", "Emaar Development", "Real Estate"),
-  dfm("DEYAAR", "Deyaar Development", "Real Estate"),
-  dfm("UNION", "Union Properties", "Real Estate"),
-  // Diversified / Investment
-  dfm("DIC", "Dubai Investments", "Diversified"),
-  dfm("TECOM", "TECOM Group", "Real Estate / Tech Zones"),
-  // Banks
-  dfm("DIB", "Dubai Islamic Bank", "Banks"),
-  dfm("CBD", "Commercial Bank of Dubai", "Banks"),
-  dfm("MASQ", "Mashreqbank", "Banks"),
-  dfm("AJMANBANK", "Ajman Bank", "Banks"),
-  // Financials
-  dfm("DFM", "Dubai Financial Market", "Exchange"),
-  dfm("GFH", "GFH Financial Group", "Financials"),
-  dfm("SHUAA", "SHUAA Capital", "Financials"),
-  dfm("AMLAK", "Amlak Finance", "Financials"),
-  // Utilities
-  dfm("DEWA", "Dubai Electricity & Water Authority", "Utilities"),
-  dfm("EMPOWER", "Emirates Central Cooling (Empower)", "Utilities"),
-  dfm("TABREED", "National Central Cooling", "Utilities"),
-  // Infrastructure / Tolls / Parking
-  dfm("SALIK", "Salik Company", "Infrastructure"),
-  dfm("PARKIN", "Parkin Company", "Infrastructure"),
-  // Aviation / Logistics
-  dfm("AIRARABIA", "Air Arabia", "Aviation"),
-  dfm("ARMX", "Aramex", "Logistics"),
-  dfm("GULFNAV", "Gulf Navigation Holding", "Logistics"),
-  dfm("DTC", "Dubai Taxi Company", "Transport"),
-  // FMCG / Consumer
-  dfm("UNIKAI", "Unikai Foods", "FMCG"),
-  // Insurance
-  dfm("ALLIANCE", "Alliance Insurance", "Insurance"),
-  // Construction
-  dfm("DSI", "Drake and Scull International", "Construction"),
-
-  // ===== ADX (Abu Dhabi) =====
-  // Banks
-  adx("FAB", "First Abu Dhabi Bank", "Banks"),
-  adx("ADCB", "Abu Dhabi Commercial Bank", "Banks"),
-  adx("ADIB", "Abu Dhabi Islamic Bank", "Banks"),
-  adx("CBI", "Commercial Bank International", "Banks"),
-  adx("RAKBANK", "National Bank of Ras Al Khaimah", "Banks"),
-  // Holding / Diversified
-  adx("IHC", "International Holding Company", "Diversified"),
-  adx("ALPHADHABI", "Alpha Dhabi Holding", "Diversified"),
-  // Real Estate
-  adx("ALDAR", "Aldar Properties", "Real Estate"),
-  adx("ESHRAQ", "Eshraq Investments", "Real Estate"),
-  adx("RAKPROP", "RAK Properties", "Real Estate"),
-  // Energy / ADNOC group
-  adx("ADNOCDIST", "ADNOC Distribution", "Oil & Gas"),
-  adx("ADNOCGAS", "ADNOC Gas", "Oil & Gas"),
-  adx("ADNOCDRILL", "ADNOC Drilling", "Oil & Gas"),
-  adx("ADNOCLS", "ADNOC Logistics & Services", "Logistics"),
-  adx("TAQA", "Abu Dhabi National Energy (TAQA)", "Utilities / Energy"),
-  adx("BOROUGE", "Borouge", "Petrochemicals"),
-  adx("DANA", "Dana Gas", "Oil & Gas"),
-  // Telecom
-  adx("EAND", "e& (Emirates Telecom Group)", "Telecom"),
-  // Consumer / Healthcare
-  adx("AGTHIA", "Agthia Group", "FMCG"),
-  adx("PUREHEALTH", "PureHealth Holding", "Healthcare"),
-  adx("ADNH", "Abu Dhabi National Hotels", "Hotels"),
-  // Aviation
-  adx("ADAVIATION", "Abu Dhabi National Aviation", "Aviation"),
-  // Industrials / Materials
-  adx("EMSTEEL", "Emirates Steel Arkan", "Metals"),
-  adx("NMDC", "NMDC Group", "Construction"),
-  adx("WAHA", "Waha Capital", "Financials"),
-  // Insurance
-  adx("ADNIC", "Abu Dhabi National Insurance", "Insurance"),
-];
-
 const INTL_META: Omit<Market, "universe"> = {
   id: "INTL",
   label: "International · Watchlist",
@@ -290,7 +202,7 @@ Relevant global macro themes:
 - Earnings cadence: US quarterly cycle (Jan/Apr/Jul/Oct), Europe semi-annual+, Asia mixed`,
 };
 
-const MARKETS_STATIC: Record<"IN" | "UAE", Market> = {
+const MARKETS_STATIC: Record<"IN" | "US", Market> = {
   IN: {
     id: "IN",
     label: "India · NSE F&O",
@@ -303,27 +215,23 @@ const MARKETS_STATIC: Record<"IN" | "UAE", Market> = {
 - Sector cycles: PSU banks, defence, capital goods, autos (rural/urban demand), pharma exports, IT (US client spending)
 - Earnings season cadence (~quarterly), upcoming budget / monetary policy events`,
   },
-  UAE: {
-    id: "UAE",
-    label: "UAE · DFM + ADX",
-    direction: "LONG_ONLY",
-    currencySymbol: "AED ",
-    timezone: "Asia/Dubai",
-    universe: UAE_UNIVERSE,
-    themePrompt: `UAE equities — both DFM-listed (Dubai) and ADX-listed (Abu Dhabi) names. Relevant macro themes:
-- Dubai real-estate cycle (DFM): off-plan launch volumes, rental yields, occupancy, payment plans
-- Abu Dhabi capital cycle (ADX): IHC ecosystem, sovereign-aligned ADNOC group spin-offs (ADNOCDIST/GAS/DRILL/LS), AI/data-center theme via G42-linked names
-- Tourism: hotels (Jumeirah, ADNH), aviation (Air Arabia, ADAVIATION), retail demand
-- AED/USD peg is fixed — no FX volatility, but US Fed liquidity still drives flows into UAE equities
-- Banking: NIMs sensitive to US Fed; DIB/Mashreq/CBD on DFM, FAB/ADCB/ADIB on ADX
-- Infrastructure & utility privatisations (DEWA, Salik, Parkin, Empower, TAQA) — yield-oriented names
-- Energy: ADNOC IPO complex on ADX (gas, drilling, logistics, distribution), Borouge for petrochems
-- Telecom: e& (EAND on ADX) is the dominant operator regionally
-- Earnings cadence ~quarterly; Dubai 2040 plan, Abu Dhabi Vision 2030, ADQ/Mubadala-driven capex, regional geopolitics`,
+  US: {
+    id: "US",
+    label: "US · S&P 500",
+    direction: "LONG_SHORT",
+    currencySymbol: "$",
+    timezone: "America/New_York",
+    universe: SPX_UNIVERSE,
+    themePrompt: `US equities — S&P 500 large caps. Relevant macro themes:
+- Fed rate path, US 10y yield, DXY, liquidity; CPI / jobs / PCE prints
+- Sector rotation: AI & semis capex (NVDA/AVGO/AMD/MSFT ecosystem), mega-cap tech earnings, financials vs. defensives, energy, healthcare, industrials
+- Earnings season cadence (Jan/Apr/Jul/Oct) — guidance & margins drive moves
+- Style factors: growth vs. value, market breadth, mega-cap concentration risk
+- Geopolitics & policy: US-China tech/tariffs, oil supply, election/fiscal cycle`,
   },
 };
 
-export const MARKETS: Record<"IN" | "UAE", Market> = MARKETS_STATIC;
+export const MARKETS: Record<"IN" | "US", Market> = MARKETS_STATIC;
 
 export async function getMarket(id: MarketId): Promise<Market> {
   if (id === "INTL") {
@@ -333,7 +241,7 @@ export async function getMarket(id: MarketId): Promise<Market> {
 }
 
 export async function listMarkets(): Promise<Market[]> {
-  return [MARKETS_STATIC.IN, MARKETS_STATIC.UAE, await getMarket("INTL")];
+  return [MARKETS_STATIC.IN, MARKETS_STATIC.US, await getMarket("INTL")];
 }
 
 export async function findStock(
@@ -361,26 +269,3 @@ function ns(symbol: string, name: string, sector: string): Stock {
   };
 }
 
-function dfm(symbol: string, name: string, sector: string): Stock {
-  return {
-    symbol,
-    yahooSymbol: `${symbol}.AE`,
-    tvSymbol: `DFM:${symbol}`,
-    exchange: "DFM",
-    marketId: "UAE",
-    name,
-    sector,
-  };
-}
-
-function adx(symbol: string, name: string, sector: string): Stock {
-  return {
-    symbol,
-    yahooSymbol: "",
-    tvSymbol: `ADX:${symbol}`,
-    exchange: "ADX",
-    marketId: "UAE",
-    name,
-    sector,
-  };
-}

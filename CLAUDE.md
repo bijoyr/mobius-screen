@@ -25,11 +25,9 @@ Two markets supported, parameterized via [src/lib/markets.ts](src/lib/markets.ts
 | ID  | Label | Direction | Exchanges | Data source |
 |-----|-------|-----------|-----------|-------------|
 | `IN`  | India · NSE F&O | LONG_SHORT | NSE (`.NS` / `NSE:`) | Yahoo Finance |
-| `UAE` | UAE · DFM + ADX | LONG_ONLY | DFM (`.AE` / `DFM:`), ADX (`ADX:`) | Yahoo (DFM) + TradingView scanner (ADX) |
+| `US`  | US · S&P 500 | LONG_SHORT | US (bare ticker; `BRK.B`→Yahoo `BRK-B`) | Yahoo Finance |
 
-**ADX dispatch**: Yahoo has no ADX coverage, so ADX stocks route through [src/lib/tvscan.ts](src/lib/tvscan.ts), which POSTs to `scanner.tradingview.com/uae/scan`. The scanner is undocumented and ToS-grey, but stable for personal use. It returns price + pre-computed RSI/MACD/SMA — **no OHLC bars**, so Fib levels are unavailable for ADX picks (the rest of the indicator stack works). `getStockData` in [src/lib/yahoo.ts](src/lib/yahoo.ts) dispatches by `stock.exchange`; everything downstream consumes the unified `StockDataResult` and is data-source-agnostic.
-
-DFM coverage was verified live via `scripts/probe-uae.mjs`; ADX via `scripts/probe-adx.mjs` (both gitignored). Re-run those periodically to confirm coverage hasn't drifted.
+The S&P 500 universe lives in [src/lib/sp500.ts](src/lib/sp500.ts) (point-in-time snapshot; refresh from the datasets/s-and-p-500-companies CSV). US stocks are plain Yahoo tickers with full OHLC history, so **all markets use Yahoo Finance** — no TradingView scanner. `fetchFreshData` in [src/lib/yahoo.ts](src/lib/yahoo.ts) handles every market through the one Yahoo path.
 
 ## Screener parameters
 
@@ -52,7 +50,7 @@ Per-stock Yahoo + TradingView symbols are pre-computed in the universe definitio
 | Framework | next 16 | App Router, server components |
 | UI | @mantine/core 9, mantine-datatable 9 | NOT v7 as in original plan |
 | AI | native `fetch` → Nebius (OpenAI-compatible REST) | Default `Qwen/Qwen3-30B-A3B-Instruct-2507`; configured via `NEBIUS_BASE_URL` / `NEBIUS_API_KEY` / `NEBIUS_MODEL`. No SDK (workerd-safe). |
-| Data | yahoo-finance2 + TradingView scanner | NSE/DFM via Yahoo; ADX via `lib/tvscan.ts` (scanner.tradingview.com) |
+| Data | yahoo-finance2 | NSE + US S&P 500 via Yahoo (full OHLC; indicators computed locally) |
 | DB | better-sqlite3 | Native module — Vercel-incompatible, see DEPLOYMENT.md |
 | Indicators | technicalindicators | RSI, MACD, SMA; Fib computed manually |
 

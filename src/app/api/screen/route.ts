@@ -23,7 +23,7 @@ import type {
   StockContext,
 } from "@/types";
 
-const KNOWN_MARKETS: MarketId[] = ["IN", "UAE", "INTL"];
+const KNOWN_MARKETS: MarketId[] = ["IN", "US", "INTL"];
 
 export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
@@ -31,13 +31,12 @@ export const maxDuration = 300;
 
 // This route reads the price cache in bulk and screens it. Live upstream fetches
 // are a bounded *top-up* only for symbols with no cache yet — the bulk refresh is
-// the job of /api/ingest (run from GitHub Actions cron). Each NSE/DFM fetch costs
+// the job of /api/ingest (run from GitHub Actions cron). Each Yahoo fetch costs
 // 2 upstream subrequests (quote + chart), so capping at 12 keeps the top-up under
-// ~24 subrequests; combined with 1 bulk read + 1 bulk write + 1 Claude call + 1
+// ~24 subrequests; combined with 1 bulk read + 1 bulk write + 1 LLM call + 1
 // save, a screen stays well under Cloudflare's 50-subrequest/invocation cap.
 const MAX_LIVE_FETCH_STOCKS = 12;
 const YAHOO_CONCURRENCY = 8;
-const TV_SCANNER_CONCURRENCY = 4;
 
 const EMPTY_INDICATORS: IndicatorBundle = {
   rsi14: null,
@@ -98,15 +97,8 @@ async function topUpMissing(
   const deferred = missing.slice(MAX_LIVE_FETCH_STOCKS);
   if (toFetch.length === 0) return { fresh: [], deferred };
 
-  const yahooStocks = toFetch.filter((s) => s.exchange !== "ADX");
-  const tvStocks = toFetch.filter((s) => s.exchange === "ADX");
-  const [yahooBatch, tvBatch] = await Promise.all([
-    mapConcurrent(yahooStocks, YAHOO_CONCURRENCY, fetchOne),
-    mapConcurrent(tvStocks, TV_SCANNER_CONCURRENCY, fetchOne),
-  ]);
-  const fresh = [...yahooBatch.results, ...tvBatch.results].filter(
-    (r): r is Fetched => r != null,
-  );
+  const batch = await mapConcurrent(toFetch, YAHOO_CONCURRENCY, fetchOne);
+  const fresh = batch.results.filter((r): r is Fetched => r != null);
   return { fresh, deferred };
 }
 

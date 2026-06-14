@@ -5,7 +5,7 @@ import type { MarketId } from "@/types";
 export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
 
-const KNOWN_MARKETS: MarketId[] = ["IN", "UAE", "INTL"];
+const KNOWN_MARKETS: MarketId[] = ["IN", "US", "INTL"];
 
 export async function GET(req: Request) {
   const url = new URL(req.url);

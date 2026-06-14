@@ -38,7 +38,7 @@ export default async function HomePage() {
         <Stack gap={2}>
           <Title order={2}>Dashboard</Title>
           <Text c="dimmed" size="sm">
-            Personal screener for NSE F&amp;O (India) and ADX + DFM (UAE). Macro-thematic + Elliott Wave, powered by Claude.
+            AI equities screener for NSE F&amp;O (India) and the S&amp;P 500 (US). Macro-thematic + Elliott Wave, powered by Nebius AI.
           </Text>
         </Stack>
 

@@ -6,7 +6,7 @@ import type { MarketId } from "@/types";
 export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
 
-const KNOWN_MARKETS: MarketId[] = ["IN", "UAE", "INTL"];
+const KNOWN_MARKETS: MarketId[] = ["IN", "US", "INTL"];
 
 function isMarketId(v: unknown): v is MarketId {
   return typeof v === "string" && KNOWN_MARKETS.includes(v as MarketId);
@@ -41,7 +41,7 @@ export async function PUT(req: Request) {
   }
   if (!isMarketId(body.market)) {
     return NextResponse.json(
-      { error: "Body must include 'market' of IN | UAE | INTL" },
+      { error: "Body must include 'market' of IN | US | INTL" },
       { status: 400 },
     );
   }

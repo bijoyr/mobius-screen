@@ -21,7 +21,7 @@ const manrope = Manrope({
 export const metadata: Metadata = {
   title: "Mobius-Screen — AI Equities Screener",
   description:
-    "AI equities screener (NSE F&O + UAE) powered by Nebius AI — macro-thematic + Elliott-Wave stock picks.",
+    "AI equities screener (NSE F&O + US S&P 500) powered by Nebius AI — macro-thematic + Elliott-Wave stock picks.",
 };
 
 export default function RootLayout({

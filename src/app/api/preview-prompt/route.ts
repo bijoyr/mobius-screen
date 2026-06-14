@@ -9,7 +9,7 @@ import type { MarketId, ScreenerParameters } from "@/types";
 export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
 
-const KNOWN_MARKETS: MarketId[] = ["IN", "UAE", "INTL"];
+const KNOWN_MARKETS: MarketId[] = ["IN", "US", "INTL"];
 
 interface Body {
   market?: MarketId;

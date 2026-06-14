@@ -15,7 +15,7 @@ export interface FetchWindow {
  * upstream data providers. Everything else falls back to cached values.
  *
  *  IN (NSE) trades 09:15–15:30 IST, Mon–Fri.
- *  UAE (DFM) trades 10:00–15:00 GST, Mon–Fri.
+ *  US (NYSE/Nasdaq) trades 09:30–16:00 ET, Mon–Fri.
  *
  * Each window is `± toleranceMin` around the stated hh:mm so that
  * scheduled hits or manual refreshes within a few minutes still go live.
@@ -25,9 +25,9 @@ export const FETCH_WINDOWS: Record<string, FetchWindow[]> = {
     { hour: 9, minute: 20, toleranceMin: 5, label: "post-open" },
     { hour: 15, minute: 25, toleranceMin: 5, label: "pre-close" },
   ],
-  UAE: [
-    { hour: 10, minute: 5, toleranceMin: 5, label: "post-open" },
-    { hour: 14, minute: 55, toleranceMin: 5, label: "pre-close" },
+  US: [
+    { hour: 9, minute: 35, toleranceMin: 5, label: "post-open" },
+    { hour: 15, minute: 55, toleranceMin: 5, label: "pre-close" },
   ],
 };
 

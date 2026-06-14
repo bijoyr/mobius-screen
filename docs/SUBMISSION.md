@@ -36,7 +36,7 @@ Use a smaller model (7B/32B) for a self-hosted endpoint to control GPU cost.
    Expect a few buys/sells printed → confirms Nebius inference works.
 3. Test the batch job cheaply (3 symbols, writes to Turso):
    ```
-   MARKETS=UAE MAX_SYMBOLS=3 npm run job
+   MARKETS=US MAX_SYMBOLS=3 npm run job
    ```
 
 ## Step 4 — Run the Serverless AI Job on Nebius  ← the eligibility run
@@ -86,5 +86,5 @@ Enter the submission via the official AI Academy form before **2026-06-30 23:59 
 | Batch Job | `jobs/batch-screen.ts` + `jobs/Dockerfile` |
 | Deploy scripts | `scripts/nebius/deploy-endpoint.sh`, `scripts/nebius/run-job.sh` |
 | Smoke test | `npx tsx --env-file=.env.local scripts/smoke-screener.ts` |
-| Cheap job run | `MARKETS=UAE MAX_SYMBOLS=3 npm run job` |
+| Cheap job run | `MARKETS=US MAX_SYMBOLS=3 npm run job` |
 | Build check | `npm run build` · `npx tsc --noEmit` |

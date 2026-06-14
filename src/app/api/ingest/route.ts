@@ -11,16 +11,15 @@ export const maxDuration = 300;
 
 // Cache-refresh worker. Each POST processes ONE bounded slice of a market's
 // universe and is a separate Cloudflare invocation with its own 50-subrequest
-// budget. A NSE/DFM fetch is 2 upstream subrequests (quote + chart), so the
+// budget. A Yahoo fetch is 2 upstream subrequests (quote + chart), so the
 // worst case is count*2 fetches + 1 batched write (+ a one-time ~6 for schema
 // migration on a cold isolate). count is capped at 16 → <= 39 subrequests.
 // The whole universe is covered by looping offset from an uncapped orchestrator
 // (GitHub Actions), so no single invocation ever approaches the cap.
-const KNOWN_MARKETS: MarketId[] = ["IN", "UAE", "INTL"];
+const KNOWN_MARKETS: MarketId[] = ["IN", "US", "INTL"];
 const DEFAULT_COUNT = 12;
 const MAX_COUNT = 16;
 const YAHOO_CONCURRENCY = 8;
-const TV_SCANNER_CONCURRENCY = 4;
 
 interface IngestBody {
   market?: MarketId;
@@ -105,15 +104,8 @@ export async function POST(req: Request) {
     });
   }
 
-  const yahooStocks = slice.filter((s) => s.exchange !== "ADX");
-  const tvStocks = slice.filter((s) => s.exchange === "ADX");
-  const [yahooBatch, tvBatch] = await Promise.all([
-    mapConcurrent(yahooStocks, YAHOO_CONCURRENCY, fetchOne),
-    mapConcurrent(tvStocks, TV_SCANNER_CONCURRENCY, fetchOne),
-  ]);
-  const results = [...yahooBatch.results, ...tvBatch.results].filter(
-    (r): r is Fetched => r != null,
-  );
+  const batch = await mapConcurrent(slice, YAHOO_CONCURRENCY, fetchOne);
+  const results = batch.results.filter((r): r is Fetched => r != null);
 
   const toWrite: CachedPriceInput[] = [];
   const failures: { symbol: string; error: string }[] = [];

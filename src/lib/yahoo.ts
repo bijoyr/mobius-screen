@@ -9,7 +9,6 @@ import type {
 import { getCachedPrice, upsertCachedPrice } from "./db";
 import { checkFetchWindow, isForceLive } from "./marketHours";
 import { computeIndicators } from "./indicators";
-import { fetchTvStockData } from "./tvscan";
 
 const yahooFinance = new YahooFinance();
 
@@ -80,10 +79,9 @@ export interface StockDataResult {
 }
 
 /**
- * Window-aware fetch with multi-provider dispatch.
+ * Window-aware fetch via Yahoo Finance.
  *
- * - NSE / DFM stocks → Yahoo Finance (has OHLC history; indicators computed locally).
- * - ADX stocks → TradingView scanner (snapshot only; indicators returned pre-computed).
+ * - All markets (NSE / US S&P 500) → Yahoo Finance (OHLC history; indicators computed locally).
  *
  * Calls upstream only when the market is inside a configured fetch window
  * (or SCREENER_FORCE_LIVE=1). Outside the window we serve the last cached
@@ -140,9 +138,6 @@ async function fetchFresh(
   stock: Stock,
   days: number,
 ): Promise<{ price: PriceSnapshot; history: Candle[]; indicators: IndicatorBundle }> {
-  if (stock.exchange === "ADX") {
-    return fetchTvStockData(stock);
-  }
   const { price, history } = await fetchStockData(stock, days);
   return { price, history, indicators: computeIndicators(history) };
 }
@@ -150,7 +145,7 @@ async function fetchFresh(
 /**
  * Fetch fresh upstream data with NO cache read/write — the building block for
  * bulk callers (the screener top-up and /api/ingest) that batch their own DB
- * writes. Dispatches NSE/DFM → Yahoo, ADX → TradingView scanner.
+ * writes. All markets (NSE / US S&P 500) use Yahoo Finance.
  */
 export async function fetchFreshData(
   stock: Stock,

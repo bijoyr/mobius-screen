@@ -14,7 +14,7 @@ Single file: [src/lib/prompts.ts](../src/lib/prompts.ts).
 
 Two ready-made framework variants:
 - `FRAMEWORK_BUY_AND_SELL` — used for `LONG_SHORT` markets (India).
-- `FRAMEWORK_BUY_ONLY` — used for `LONG_ONLY` markets (UAE). Requires R:R ≥ 2 and forbids short ideas.
+- `FRAMEWORK_BUY_ONLY` — used for `LONG_ONLY` markets (the INTL watchlist). Requires R:R ≥ 2 and forbids short ideas.
 
 To add a new market, add it to `MARKETS` in [markets.ts](../src/lib/markets.ts) with a `themePrompt` describing its macro drivers — the prompt-builder will pick it up automatically.
 

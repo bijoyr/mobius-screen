@@ -19,7 +19,7 @@ JOB_NAME="${JOB_NAME:-mobius-batch-screen}"
 PLATFORM="${PLATFORM:-cpu-d3}"
 PRESET="${PRESET:-4vcpu-16gb}"
 TIMEOUT="${TIMEOUT:-1h}"
-MARKETS="${MARKETS:-IN UAE INTL}"
+MARKETS="${MARKETS:-IN US INTL}"
 
 SUBNET_ID="${SUBNET_ID:-$(nebius vpc subnet list --format jsonpath='{.items[0].metadata.id}')}"
 

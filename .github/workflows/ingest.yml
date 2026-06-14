@@ -14,13 +14,13 @@ on:
   schedule:
     # Times are UTC. NSE 09:15-15:30 IST  = ~03:45-10:00 UTC, Mon-Fri.
     - cron: "*/20 3-10 * * 1-5"
-    # UAE 10:00-15:00 GST = ~06:00-11:00 UTC, Sun-Thu (days 0-4).
-    - cron: "*/20 5-11 * * 0,1,2,3,4"
+    # US (NYSE/Nasdaq) 09:30-16:00 ET = ~13:30-21:00 UTC, Mon-Fri.
+    - cron: "*/20 13-21 * * 1-5"
   workflow_dispatch:
     inputs:
       markets:
         description: "Space-separated markets to ingest"
-        default: "IN UAE INTL"
+        default: "IN US INTL"
       count:
         description: "Stocks per slice (max 16)"
         default: "12"
@@ -38,7 +38,7 @@ jobs:
         env:
           WORKER_URL: ${{ secrets.WORKER_URL }}
           INGEST_SECRET: ${{ secrets.INGEST_SECRET }}
-          MARKETS: ${{ github.event.inputs.markets || 'IN UAE INTL' }}
+          MARKETS: ${{ github.event.inputs.markets || 'IN US INTL' }}
           COUNT: ${{ github.event.inputs.count || '12' }}
         run: |
           set -euo pipefail
