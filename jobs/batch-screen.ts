@@ -20,12 +20,31 @@
  *   NEBIUS_BASE_URL, NEBIUS_API_KEY, NEBIUS_MODEL  — see src/lib/providers/nebius.ts
  *   TURSO_DATABASE_URL, TURSO_AUTH_TOKEN  — required (shared DB)
  */
-import type { Market, MarketId, Stock, StockContext } from "@/types";
+import type {
+  IndicatorBundle,
+  Market,
+  MarketId,
+  Stock,
+  StockContext,
+} from "@/types";
 import { getMarket } from "@/lib/markets";
 import { fetchFreshData } from "@/lib/yahoo";
 import { mapConcurrent } from "@/lib/concurrent";
 import { runScreener } from "@/lib/llm";
-import { upsertCachedPrices, saveScreenRun, type CachedPriceInput } from "@/lib/db";
+import {
+  upsertCachedPrices,
+  saveScreenRun,
+  getCachedContexts,
+  type CachedPriceInput,
+} from "@/lib/db";
+
+const EMPTY_INDICATORS: IndicatorBundle = {
+  rsi14: null,
+  macd: null,
+  fib: null,
+  sma50: null,
+  sma200: null,
+};
 
 const KNOWN_MARKETS: MarketId[] = ["IN", "US", "INTL"];
 const YAHOO_CONCURRENCY = 8;
@@ -82,6 +101,10 @@ async function screenMarket(
       "…",
   );
 
+  // Existing cache for this market — used as a fallback when a fresh fetch fails
+  // so a few upstream hiccups don't shrink the screened universe.
+  const cached = await getCachedContexts(market.id);
+
   const batch = await mapConcurrent(universe, YAHOO_CONCURRENCY, (s) =>
     fetchOne(market, s),
   );
@@ -89,20 +112,34 @@ async function screenMarket(
 
   const contexts: StockContext[] = [];
   const toWrite: CachedPriceInput[] = [];
-  const failures: string[] = [];
+  let freshCount = 0;
+  const staleFallback: string[] = [];
+  const dropped: string[] = [];
   for (const f of fetched) {
     if (f.context && f.write) {
       contexts.push(f.context);
       toWrite.push(f.write);
+      freshCount++;
     } else {
-      failures.push(f.symbol);
+      // Fresh fetch failed → reuse the last cached value if we have one.
+      const c = cached.get(f.symbol);
+      if (c) {
+        contexts.push({
+          symbol: f.symbol,
+          price: c.price,
+          indicators: c.indicators ?? EMPTY_INDICATORS,
+        });
+        staleFallback.push(f.symbol);
+      } else {
+        dropped.push(f.symbol);
+      }
     }
   }
 
   await upsertCachedPrices(toWrite);
   console.log(
-    `[${marketId}] cached ${toWrite.length}, failed ${failures.length}` +
-      (failures.length ? ` (${failures.slice(0, 8).join(", ")}…)` : ""),
+    `[${marketId}] fresh ${freshCount}, stale-cache ${staleFallback.length}, dropped ${dropped.length}` +
+      (dropped.length ? ` (${dropped.slice(0, 8).join(", ")}…)` : ""),
   );
 
   if (contexts.length === 0) {
