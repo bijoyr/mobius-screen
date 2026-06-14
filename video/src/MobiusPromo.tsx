@@ -153,7 +153,7 @@ const SceneEarly: React.FC = () => {
         </Rise>
         <Rise delay={20}>
           <div style={{ fontSize: 32, color: DIM, marginTop: 22 }}>
-            Enter at the end of a Wave 2 or 4 pullback. Exit as Wave 5 exhausts.
+            Blending real-time market developments with technical breaches and Elliott-wave counts.
           </div>
         </Rise>
         <Rise delay={40}>
@@ -176,40 +176,42 @@ const SceneEarly: React.FC = () => {
   );
 };
 
-// ---------- Scene 3: Narrow the field ----------
-const BigNum: React.FC<{ at: number; value: string; label: string }> = ({
-  at,
-  value,
-  label,
-}) => {
-  const frame = useCurrentFrame();
-  const { fps } = useVideoConfig();
-  const s = spring({ frame: frame - at, fps, config: { damping: 200 } });
-  const out = interpolate(frame, [at + 52, at + 64], [1, 0], {
-    extrapolateLeft: "clamp",
-    extrapolateRight: "clamp",
-  });
-  const opacity = Math.min(s, out);
-  return (
-    <AbsoluteFill style={{ justifyContent: "center", alignItems: "center" }}>
-      <div style={{ opacity, transform: `scale(${0.6 + s * 0.4})`, textAlign: "center" }}>
-        <div style={{ fontSize: 200, fontWeight: 800, color: CANARY }}>{value}</div>
-        <div style={{ fontSize: 34, color: DIM, letterSpacing: 2 }}>{label}</div>
-      </div>
-    </AbsoluteFill>
-  );
-};
-
-const SceneNarrow: React.FC = () => (
+// ---------- Scene 3: Scale across global indexes ----------
+const SceneScale: React.FC = () => (
   <Bg>
-    <div style={{ position: "absolute", top: 90, width: "100%", textAlign: "center" }}>
+    <div style={{ textAlign: "center", width: 1350 }}>
       <Rise>
-        <Kicker>Signal, not noise</Kicker>
+        <Kicker>Built to scale</Kicker>
+        <div style={{ fontSize: 66, fontWeight: 800 }}>
+          Screen <span style={{ color: CANARY }}>thousands</span> of stocks
+        </div>
+      </Rise>
+      <Rise delay={14}>
+        <div style={{ fontSize: 32, color: DIM, marginTop: 14 }}>
+          across global indexes — one serverless pipeline.
+        </div>
+      </Rise>
+      <div
+        style={{
+          display: "flex",
+          gap: 16,
+          justifyContent: "center",
+          flexWrap: "wrap",
+          margin: "40px 0",
+        }}
+      >
+        {["S&P 500", "Nasdaq 100", "NSE / Nifty", "FTSE 100", "Nikkei 225", "DAX", "Hang Seng"].map(
+          (m, i) => (
+            <Chip key={m} label={m} i={i} />
+          ),
+        )}
+      </div>
+      <Rise delay={84}>
+        <div style={{ fontSize: 32, color: WHITE }}>
+          …ranked down to a <span style={{ color: CANARY }}>high-conviction shortlist</span>.
+        </div>
       </Rise>
     </div>
-    <BigNum at={8} value="679" label="stocks tracked · S&P 500 + NSE F&O" />
-    <BigNum at={74} value="10" label="high-conviction setups" />
-    <BigNum at={140} value="1" label="top pick — ranked by conviction" />
   </Bg>
 );
 
@@ -271,7 +273,7 @@ const SceneCard: React.FC = () => (
       </Rise>
       <Rise delay={48}>
         <div style={{ fontSize: 26, color: DIM, marginTop: 22, textAlign: "center" }}>
-          Wave count · RSI · MACD · Fibonacci · moving averages · hard risk/reward floor
+          Live prices · technical breaches · Fibonacci · Elliott-wave counts · hard R:R
         </div>
       </Rise>
     </div>
@@ -308,7 +310,7 @@ const SceneNebius: React.FC = () => (
       <Rise>
         <Kicker>Powered by Nebius AI</Kicker>
         <div style={{ fontSize: 60, fontWeight: 800 }}>
-          The best <span style={{ color: CANARY }}>open models</span>, on Serverless AI.
+          High-performance <span style={{ color: CANARY }}>open models</span>, on Serverless AI.
         </div>
       </Rise>
       <div
@@ -326,8 +328,8 @@ const SceneNebius: React.FC = () => (
       </div>
       <Rise delay={44}>
         <div style={{ fontSize: 32, color: DIM }}>
-          Swap any model with one line · a serverless job screens the whole universe ·
-          <span style={{ color: WHITE }}> pennies per run, no idle GPU.</span>
+          Reasoning over real-time, ever-changing technical metrics · swap any model with one line ·
+          <span style={{ color: WHITE }}> serverless scale, pennies per run.</span>
         </div>
       </Rise>
     </div>
@@ -390,7 +392,7 @@ export const MobiusPromo: React.FC = () => {
         <SceneEarly />
       </Sequence>
       <Sequence from={330} durationInFrames={210}>
-        <SceneNarrow />
+        <SceneScale />
       </Sequence>
       <Sequence from={540} durationInFrames={180}>
         <SceneCard />
