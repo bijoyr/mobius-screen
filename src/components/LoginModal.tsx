@@ -12,7 +12,7 @@ import {
   Text,
   TextInput,
 } from "@mantine/core";
-import { IconBrandGoogle, IconLogin2 } from "@tabler/icons-react";
+import { IconLogin2 } from "@tabler/icons-react";
 import { ContactForm } from "./ContactForm";
 
 export function LoginModal({
@@ -45,16 +45,9 @@ export function LoginModal({
   return (
     <Modal opened={opened} onClose={onClose} title="Sign in to Mobius-Screen" centered>
       <Stack gap="md">
-        <Button
-          fullWidth
-          variant="default"
-          leftSection={<IconBrandGoogle size={16} />}
-          onClick={() => signIn("google")}
-        >
-          Continue with Google
-        </Button>
-
-        <Divider label="or use a demo login" labelPosition="center" />
+        <Text size="sm" c="dimmed">
+          Enter your demo credentials, or request access below.
+        </Text>
 
         <form onSubmit={handleDemo}>
           <Stack gap="xs">

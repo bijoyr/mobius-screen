@@ -112,7 +112,8 @@ docker run --rm -p 3000:3000 --env-file .env.local mobius-screen
 | `NEBIUS_API_KEY` | yes | — | Nebius key or endpoint token |
 | `NEBIUS_MODEL` | no | `Qwen/Qwen3-30B-A3B-Instruct-2507` | any served model |
 | `TURSO_DATABASE_URL` / `TURSO_AUTH_TOKEN` | yes | — | libSQL DB |
-| `AUTH_SECRET`, `AUTH_GOOGLE_ID`, `AUTH_GOOGLE_SECRET`, `AUTH_URL` | yes | — | Google sign-in |
+| `AUTH_SECRET`, `AUTH_URL` | yes | — | session signing for the demo login |
+| `DEMO_USERNAME` / `DEMO_PASSWORD` | no | `Tintin` / `Mobius9` | shared demo login |
 | `MARKETS` | job | `IN US INTL` | markets the job screens |
 | `MAX_SYMBOLS` | job | `0` | cap symbols/market (`0`=all); set small for a cheap test |
 | `BATCH_USER_ID` | job | `batch` | owner of job-written screens |

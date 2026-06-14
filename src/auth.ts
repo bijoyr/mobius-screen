@@ -1,12 +1,5 @@
 import NextAuth from "next-auth";
-import Google from "next-auth/providers/google";
 import Credentials from "next-auth/providers/credentials";
-
-// Google sign-in is restricted to these emails (the owner). Broader access is
-// granted via the shared demo credentials below (DEMO_USERNAME / DEMO_PASSWORD).
-const ALLOWED_EMAILS = new Set([
-  "bijoyr@gmail.com",
-]);
 
 declare module "next-auth" {
   interface Session {
@@ -21,9 +14,9 @@ declare module "next-auth" {
 
 export const { handlers, auth, signIn, signOut } = NextAuth({
   providers: [
-    Google,
-    // Shared demo login for invited users. Credentials come from env so they can
-    // be rotated without a code change (defaults: Tintin / Mobius9).
+    // Shared demo login. Credentials come from env so they can be rotated without
+    // a code change (defaults: Tintin / Mobius9). New users request their own via
+    // the "Contact us for login details" form, which emails the owner.
     Credentials({
       id: "demo",
       name: "Demo access",
@@ -38,11 +31,7 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
         const pass = typeof creds?.password === "string" ? creds.password.trim() : "";
         if (user && pass && user === expectedUser && pass === expectedPass) {
           // Stable id → all demo users share one isolated data space.
-          return {
-            id: "demo-user",
-            name: expectedUser,
-            email: "demo@mobius-screen.app",
-          };
+          return { id: "demo-user", name: expectedUser, email: "demo@mobius-screen.app" };
         }
         return null;
       },
@@ -51,15 +40,7 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
   trustHost: true,
   session: { strategy: "jwt" },
   callbacks: {
-    async signIn({ account, profile }) {
-      // Demo credentials are already validated in authorize().
-      if (account?.provider === "demo") return true;
-      const email = profile?.email?.toLowerCase();
-      if (!email) return false;
-      return ALLOWED_EMAILS.has(email);
-    },
-    async jwt({ token, user, profile }) {
-      if (profile?.sub) token.sub = profile.sub;
+    async jwt({ token, user }) {
       if (user?.name) token.name = user.name;
       return token;
     },

@@ -54,24 +54,22 @@ wrangler secret put NEBIUS_API_KEY
 wrangler secret put TURSO_DATABASE_URL
 wrangler secret put TURSO_AUTH_TOKEN
 wrangler secret put AUTH_SECRET
-wrangler secret put AUTH_GOOGLE_ID
-wrangler secret put AUTH_GOOGLE_SECRET
 wrangler secret put AUTH_URL          # https://screener.trustfractals.com
 wrangler secret put INGEST_SECRET
-wrangler secret put DEMO_USERNAME     # shared demo login (e.g. Tintin)
-wrangler secret put DEMO_PASSWORD     # e.g. Mobius9
 npm run deploy
 ```
-Non-secret vars (`NEBIUS_BASE_URL`, `NEBIUS_MODEL`, `NEXT_PUBLIC_FORMSPREE_ID`)
-live in [wrangler.jsonc](../wrangler.jsonc).
+Non-secret vars (`NEBIUS_BASE_URL`, `NEBIUS_MODEL`, `NEXT_PUBLIC_FORMSPREE_ID`,
+and the shared demo login `DEMO_USERNAME`/`DEMO_PASSWORD`) live in
+[wrangler.jsonc](../wrangler.jsonc).
 
 **Custom domain.** [wrangler.jsonc](../wrangler.jsonc) binds the Worker to
 `screener.trustfractals.com` via a `custom_domain` route — `npm run deploy`
 auto-creates the DNS record + TLS cert. The zone (`trustfractals.com`) must be in
 the same Cloudflare account. To change/remove the domain, edit the `routes` block.
 
-**Google OAuth.** Add the production redirect URI to your Google OAuth client:
-`https://screener.trustfractals.com/api/auth/callback/google` (must match `AUTH_URL`).
+**Auth.** Sign-in is a shared demo login (Credentials provider) — no third-party
+OAuth to configure. Change the credentials via the `DEMO_USERNAME`/`DEMO_PASSWORD`
+vars; new users request access through the in-app "Contact us" form.
 
 ### Price-cache cron (optional — GitHub Actions)
 [.github/workflows/ingest.yml](../.github/workflows/ingest.yml) refreshes the Turso

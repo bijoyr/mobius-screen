@@ -33,9 +33,6 @@ do these in order. Deadline: **June 30, 2026**.
 
 ### Housekeeping (do once, anytime)
 - Rotate the **Turso** auth token (it sat in local config) and update `.env.local`.
-- In Google Cloud Console, make sure this redirect URI is added:
-  `https://screener.trustfractals.com/api/auth/callback/google`
-- For the deployed site, set the demo login as secrets:
-  `npx wrangler secret put DEMO_USERNAME` and `npx wrangler secret put DEMO_PASSWORD`.
+- Rotate the **Nebius** API key (it was shared in chat) and update `.env.local` + `npx wrangler secret put NEBIUS_API_KEY`.
 
 Demo login to share with people: **Username `Tintin` · Password `Mobius9`**.
