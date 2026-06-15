@@ -17,7 +17,7 @@ Token Factory**; a CPU-only **Nebius Serverless AI Job** batch-screens the unive
 | **GitHub repo (public, MIT)** | https://github.com/bijoyr/mobius-screen |
 | **Project site (GitHub Pages)** | https://bijoyr.github.io/mobius-screen/ |
 | **Blog (rendered)** | https://bijoyr.github.io/mobius-screen/BLOG.html  ·  source: `docs/BLOG.md` |
-| **Promo video (MP4)** | `video/out/mobius-promo.mp4` → upload to YouTube/Loom, paste URL below |
+| **Promo video (hosted)** | https://bijoyr.github.io/mobius-screen/mobius-promo.mp4  (source: `video/`) |
 
 ---
 
@@ -29,7 +29,7 @@ Token Factory**; a CPU-only **Nebius Serverless AI Job** batch-screens the unive
 - **GitHub repository URL:** `https://github.com/bijoyr/mobius-screen`
 - **Blog post URL:** `https://bijoyr.github.io/mobius-screen/BLOG.html` *(or your Medium/Dev URL)*
 - **PDF export of blog post:** export from the blog page → **Ctrl+P → Save as PDF** (≤20 MB)
-- **Video link (optional):** `__________` *(YouTube/Loom URL after upload)*
+- **Video link (optional):** `https://bijoyr.github.io/mobius-screen/mobius-promo.mp4` *(or a YouTube/Loom upload)*
 
 **Short summary (87 words — ≤100):**
 > Mobius-Screen is an open-source AI equities screener that hunts Elliott-Wave impulse
